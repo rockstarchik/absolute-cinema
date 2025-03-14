@@ -1,0 +1,117 @@
+#include <iostream>
+#include <vector>
+#include <cstdlib>
+#include <ctime>
+using namespace std;
+
+vector<int> RandomArray(int size, int minV, int maxV) {
+    vector<int> arr(size);
+    for (int i = 0; i < size; i++) {
+        arr[i] = minV + rand() % (maxV - minV + 1);
+    }
+    return arr;
+}
+
+void PrintArr(const vector<int>& arr) {
+    for (int i = 0; i < arr.size(); i++) {
+        cout << arr[i] << " ";
+    }
+    cout << endl;
+}
+
+void SelectionSort(vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 0; i < n - 1; i++) {
+        int minI = i;
+        for (int j = i + 1; j < n; j++) {
+            if (arr[j] < arr[minI]) {
+                minI = j;
+            }
+        }
+        if (minI != i) {
+            swap(arr[i], arr[minI]);
+        }
+    }
+}
+
+void BubbleSort(vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                swap(arr[j], arr[j + 1]);
+            }
+        }
+    }
+}
+
+void InsertionSort(vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 1; i < n; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+// Функция для получения цифры числа в определённом разряде
+int GetDigit(int number, int digitPlace) {
+    return (number / digitPlace) % 10;
+}
+
+void RadixSort(vector<int>& arr) {
+    if (arr.empty()) return;
+    int MaxNumber = arr[0];
+    for (int num : arr) {
+        if (num > MaxNumber) {
+            MaxNumber = num;
+        }
+    }
+    for (int digitPlace = 1; MaxNumber / digitPlace > 0; digitPlace *= 10) {
+        vector<vector<int>> buckets(10);
+        for (int num : arr) {
+            int digit = GetDigit(num, digitPlace);
+            buckets[digit].push_back(num);
+        }
+        int index = 0;
+        for (int i = 0; i < 10; i++) {
+            for (int num : buckets[i]) {
+                arr[index] = num;
+                index++;
+            }
+        }
+    }
+}
+
+int main() {
+    srand(time(0));
+    int size = 10;
+    int minV = 1;
+    int maxV = 1000;
+    vector<int> arr = RandomArray(size, minV, maxV);
+    cout << "Исходный массив: ";
+    PrintArr(arr);
+
+    vector<int> arr1 = arr;
+    vector<int> arr2 = arr;
+    vector<int> arr3 = arr;
+    vector<int> arr4 = arr;
+
+    SelectionSort(arr1);
+    cout << "Сортировка выбором: ";
+    PrintArr(arr1);
+    BubbleSort(arr2);
+    cout << "Сортировка пузырьком: ";
+    PrintArr(arr2);
+    InsertionSort(arr3);
+    cout << "Сортировка вставками: ";
+    PrintArr(arr3);
+    RadixSort(arr4);
+    cout << "Поразрядная сортировка: ";
+    PrintArr(arr4);
+    return 0;
+}
