@@ -1,0 +1,147 @@
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+using namespace std;
+
+
+void RandomArray(int arr[], int size, int minV, int maxV) {
+    for (int i = 0; i < size; i++) {
+        arr[i] = minV + rand() % (maxV - minV + 1);
+    }
+}
+
+void PrintArr(int arr[], int size) {
+    for (int i = 0; i < size; i++) {
+        cout << arr[i] << " ";
+    }
+    cout << endl;
+}
+
+void SelectionSort(int arr[], int size) {
+    for (int i = 0; i < size - 1; i++) {
+        int minI = i;
+        for (int j = i + 1; j < size; j++) {
+            if (arr[j] < arr[minI]) {
+                minI = j;
+            }
+        }
+        if (minI != i) {
+            swap(arr[i], arr[minI]);
+        }
+    }
+}
+
+void BubbleSort(int arr[], int size) {
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = 0; j < size - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                swap(arr[j], arr[j + 1]);
+            }
+        }
+    }
+}
+
+// Сортировка вставками
+void insertionSort(int arr[], int size) {
+    for (int i = 1; i < size; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+// Функция для получения цифры числа в определённом разряде
+int getDigit(int number, int digitPlace) {
+    return (number / digitPlace) % 10;
+}
+
+// Поразрядная сортировка
+void radixSort(int arr[], int size) {
+    if (size == 0) return;
+
+    // Находим максимальное число в массиве
+    int maxNumber = arr[0];
+    for (int i = 1; i < size; i++) {
+        if (arr[i] > maxNumber) {
+            maxNumber = arr[i];
+        }
+    }
+
+    // Создаем временный массив
+    int* output = new int[size];
+    
+    // Сортируем по каждому разряду
+    for (int digitPlace = 1; maxNumber / digitPlace > 0; digitPlace *= 10) {
+        int count[10] = {0};
+
+        // Подсчитываем количество элементов для каждой цифры
+        for (int i = 0; i < size; i++) {
+            int digit = getDigit(arr[i], digitPlace);
+            count[digit]++;
+        }
+
+        // Преобразуем count в позиции
+        for (int i = 1; i < 10; i++) {
+            count[i] += count[i - 1];
+        }
+
+        // Заполняем output
+        for (int i = size - 1; i >= 0; i--) {
+            int digit = getDigit(arr[i], digitPlace);
+            output[count[digit] - 1] = arr[i];
+            count[digit]--;
+        }
+
+        // Копируем обратно в arr
+        for (int i = 0; i < size; i++) {
+            arr[i] = output[i];
+        }
+    }
+    delete[] output;
+}
+
+int main() {
+    srand(time(0));
+    const int size = 10;
+    int minValue = 1;
+    int maxValue = 1000;
+
+    // Создаем и заполняем массив
+    int arr[size];
+    generateRandomArray(arr, size, minValue, maxValue);
+
+    cout << "Исходный массив: ";
+    printArray(arr, size);
+
+    // Создаем копии для каждой сортировки
+    int arr1[size], arr2[size], arr3[size], arr4[size];
+    for (int i = 0; i < size; i++) {
+        arr1[i] = arr2[i] = arr3[i] = arr4[i] = arr[i];
+    }
+
+    // Сортировка выбором
+    selectionSort(arr1, size);
+    cout << "Сортировка выбором: ";
+    printArray(arr1, size);
+
+    // Сортировка пузырьком
+    bubbleSort(arr2, size);
+    cout << "Сортировка пузырьком: ";
+    printArray(arr2, size);
+
+    // Сортировка вставками
+    insertionSort(arr3, size);
+    cout << "Сортировка вставками: ";
+    printArray(arr3, size);
+
+    // Поразрядная сортировка
+    radixSort(arr4, size);
+    cout << "Поразрядная сортировка: ";
+    printArray(arr4, size);
+
+    return 0;
+}
